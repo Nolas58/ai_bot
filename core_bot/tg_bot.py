@@ -76,7 +76,7 @@ async def chat(message: Message):
     # Получаем путь к директории bot_yaml (на два уровня выше текущего файла)
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-    yaml_folder = os.path.join(project_root, 'file_salon\\file_list')  # Укажите путь к папке с YAML файлами
+    yaml_folder = os.path.join(project_root, 'file_salon/file_list')  # Укажите путь к папке с YAML файлами
     try:
         interpreted_agent = MemoryPathfinderAgent(model_name=MODEL_NAME, api_key=OPEN_API_KEY)
         respons_interpreted = interpreted_agent.process_memory_and_answer(message_data, memory_pathfinder_prompt, memory)
