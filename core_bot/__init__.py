@@ -1,1 +1,1 @@
-from . import bot_VK
+from . import tg_bot

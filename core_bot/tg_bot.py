@@ -1,4 +1,5 @@
 import logging
+import os
 import nest_asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
@@ -7,7 +8,7 @@ from datetime import datetime
 from agents.core.combined_script import process_yaml_and_answer, process_yaml_files_and_call_llm
 from agents.response_agent import MemoryPathfinderAgent
 from prompts.Instructions import memory_pathfinder_prompt
-from config import OPEN_AI_KEY, MODEL_NAME, TG_TOKEN
+from config import OPEN_API_KEY, MODEL_NAME, TG_TOKEN
 
 # Применение патча для совместимости asyncio
 nest_asyncio.apply()
@@ -66,17 +67,21 @@ async def chat(message: Message):
 
     message_data = message.text
     logging.info(f"Сообщение от пользователя: {message_data}")
+    print(f"Сообщение от пользователя: {message_data}")
     current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     user_data[user_id]['dates'].append(current_date)
 
     memory = user_data[user_id]['memory']
     memory.append(f"user: {message_data}, Отправлено: {current_date}")
+    # Получаем путь к директории bot_yaml (на два уровня выше текущего файла)
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-    yaml_folder = r"C:\Users\lever\PycharmProjects\bot_yaml\file_salon\file_list"  # Укажите путь к папке с YAML файлами
+    yaml_folder = os.path.join(project_root, 'file_salon\\file_list')  # Укажите путь к папке с YAML файлами
     try:
-        interpreted_agent = MemoryPathfinderAgent(model_name=MODEL_NAME, api_key=OPEN_AI_KEY)
+        interpreted_agent = MemoryPathfinderAgent(model_name=MODEL_NAME, api_key=OPEN_API_KEY)
         respons_interpreted = interpreted_agent.process_memory_and_answer(message_data, memory_pathfinder_prompt, memory)
         logging.info("Начат поиск подходящего файла...")
+        print("Начат поиск подходящего файла...")
         file_name = process_yaml_files_and_call_llm(yaml_folder, respons_interpreted)
         if not file_name:
             raise FileNotFoundError(f"Файл для запроса '{message_data}' не найден")

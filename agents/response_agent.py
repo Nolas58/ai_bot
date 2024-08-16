@@ -1,7 +1,6 @@
 # TODO: сдесь у нас все классы агентов. Агенты находятся тут
 import os
 import yaml
-import re
 import json
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -143,6 +142,7 @@ class FinalResponseAgent(ResponseAgent):
             })
             # Логируем полученный ответ от модели
             logger.info(f"Ответ от Финальной модели: {response.content if hasattr(response, 'content') else response}\n")
+            print(f"Ответ от Финальной модели: {response.content if hasattr(response, 'content') else response}\n")
         except Exception as e:
             # Логируем возможную ошибку
             logger.error(f"Ошибка при вызове модели: {e}")
@@ -178,6 +178,7 @@ class MemoryPathfinderAgent(ResponseAgent):
         })
 
         logger.info(f"Расшифровка запроса: {response.content if hasattr(response, 'content') else response}")
+        print(f"Расшифровка запроса: {response.content if hasattr(response, 'content') else response}")
 
         # Возвращаем ответ от модели
         return response.content if hasattr(response, 'content') else response
@@ -206,8 +207,10 @@ class ChatInfoExtractorAgent(ResponseAgent):
             with open(json_file_path, 'w', encoding='utf-8') as file:
                 json.dump(initial_data, file, ensure_ascii=False, indent=4)
             logger.info(f"Создан новый JSON файл для пользователя {user_id} по пути {json_file_path}")
+            print(f"Создан новый JSON файл для пользователя {user_id} по пути {json_file_path}")
         else:
             logger.info(f"JSON файл для пользователя {user_id} уже существует по пути {json_file_path}")
+            print(f"JSON файл для пользователя {user_id} уже существует по пути {json_file_path}")
 
     def update_user_json(self, user_id, response_content, save_info):
         json_file_path = os.path.join(save_info, f"user_{user_id}.json")
@@ -259,5 +262,6 @@ class ChatInfoExtractorAgent(ResponseAgent):
 
         # Логируем JSON
         logger.info(f"Извлеченная информация в формате JSON: {json.dumps(response_content, ensure_ascii=False, indent=4)}\n")
+        print(f"Извлеченная информация в формате JSON: {json.dumps(response_content, ensure_ascii=False, indent=4)}\n")
 
         return response_content
